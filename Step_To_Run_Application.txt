@@ -1,0 +1,5 @@
+1. start the eclipse and chose browse and go one step inside Ecommerce_Backend_OAuth2 and launch
+2. double click on the docker icon and start the image
+   type localhost:9192 in the google
+3. start the MySQL
+4. open visual studio code and open terminal and run the command npm run dev

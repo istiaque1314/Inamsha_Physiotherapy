@@ -1,0 +1,97 @@
+package com.ansi.service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ansi.dto.PatientDTO;
+import com.ansi.entity.Patient;
+import com.ansi.exception.AnsiEcommerceException;
+import com.ansi.repository.PatientRepository;
+
+import jakarta.transaction.Transactional;
+
+@Service(value = "customerService")
+@Transactional
+public class PatientServiceImpl implements PatientService {
+
+	@Autowired
+	PatientRepository patientRepository;
+
+	@Override
+	public Long addPatientDetails(PatientDTO patientDTO) throws AnsiEcommerceException {
+		Optional<Patient> optional = patientRepository.findById(patientDTO.getId());
+		if (optional.isPresent())
+			throw new AnsiEcommerceException("Service.PATIENT_FOUND");
+
+		Patient patient = new Patient();
+		patient.setId(patientDTO.getId());
+		patient.setName(patientDTO.getName());
+		patient.setEmailId(patientDTO.getEmailId());
+		patient.setGender(patientDTO.getGender());
+		patient.setContactNumber(patientDTO.getContactNumber());
+
+		patientRepository.save(patient);
+		return patient.getId();
+
+	}
+
+	@Override
+	public PatientDTO getPatient(Long patientId) throws AnsiEcommerceException {
+		Optional<Patient> optional = patientRepository.findById(patientId);
+		Patient patient = optional.orElseThrow(() -> new AnsiEcommerceException("Service.PATIENT_NOT_FOUND"));
+
+		PatientDTO patientDTO = new PatientDTO();
+		patientDTO.setId(patient.getId());
+		patientDTO.setName(patient.getName());
+		patientDTO.setEmailId(patient.getEmailId());
+		patientDTO.setGender(patient.getGender());
+		patientDTO.setContactNumber(patient.getContactNumber());
+
+		return patientDTO;
+	}
+
+	@Override
+	public List<PatientDTO> getAllPatientDetails() throws AnsiEcommerceException {
+		Iterable<Patient> patients = patientRepository.findAll();
+		List<PatientDTO> patientDTOs = new ArrayList<PatientDTO>();
+
+		patients.forEach(patient -> {
+			PatientDTO patientDTO = new PatientDTO();
+
+			patientDTO.setId(patient.getId());
+			patientDTO.setName(patient.getName());
+			patientDTO.setEmailId(patient.getEmailId());
+			patientDTO.setGender(patient.getGender());
+			patientDTO.setContactNumber(patient.getContactNumber());
+
+			patientDTOs.add(patientDTO);
+		});
+
+		if (patientDTOs.isEmpty())
+			throw new AnsiEcommerceException("Service.PATIENTS_NOT_FOUND");
+
+		return patientDTOs;
+	}
+
+	@Override
+	public void updatePatient(Long Id, String name) throws AnsiEcommerceException {
+		Optional<Patient> optional = patientRepository.findById(Id);
+		Patient patient = optional.orElseThrow(() -> new AnsiEcommerceException("Service.PATIENT_NOT_FOUND"));
+		patient.setEmailId(name);
+		patientRepository.save(patient);
+
+	}
+
+	@Override
+	public void deletePatient(Long patientId) throws AnsiEcommerceException {
+		Optional<Patient> optional = patientRepository.findById(patientId);
+		Patient patient = optional.orElseThrow(() -> new AnsiEcommerceException("Service.PATIENT_NOT_FOUND"));
+		patientRepository.delete(patient);
+
+	}
+
+}

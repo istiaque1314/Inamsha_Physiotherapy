@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* body{
+    background-color: hsl(226, 83%, 7%);
+} */
+
+.bg-color{
+    background-color: hsl(226, 83%, 7%);
+}
+
+/* index.css or your CSS file */
+.slide-in {
+    transition: transform 0.3s ease;
+    transform: translateX(0);
+  }
+  
+  .slide-out {
+    transition: transform 0.3s ease;
+    transform: translateX(-100%);
+  }
+  
